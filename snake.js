@@ -1,3 +1,5 @@
+//start definizione classi
+
 class Apple {
   constructor(x, y, size) {
     this.size = size;
@@ -47,6 +49,7 @@ class Snake {
     this.tail.push(newRect);
   }
 
+  //*controlla le collisioni con le mura e con la coda del serpente
   checkCollisions() {
     var head = this.tail[this.tail.length - 1];
     if (head.x == 600 || head.x == -20 || head.y == 600 || head.y == -20)
@@ -56,10 +59,14 @@ class Snake {
         this.dead = true;
     }
   }
+
+  //*fa allungare il serpente
   grow(x, y) {
     var newRect = { x: x, y: y };
     this.tail.push(newRect);
   }
+
+  //*fa accorciare il serpente
   shrink() {
     if (this.tail.length > 0) this.tail.pop();
     else this.dead = true;
@@ -71,9 +78,13 @@ class Mine {
     this.x = x * size;
     this.y = y * size;
     this.size = size;
+
+    //*può servire per far sparire le mine dopo un po'...funzionalità non implementata ancora
     this.timeAlive = 0;
   }
 }
+
+//end definizione classi
 
 var canvas = document.getElementById("canvas");
 var canvasContext = canvas.getContext("2d");
@@ -90,6 +101,7 @@ window.onload = () => {
 };
 
 function gameLoop() {
+  //viene richiamata automaticamente la funzione show
   setInterval(show, 1000 / 10); //12 fps
 }
 
@@ -104,14 +116,17 @@ function update() {
     eatMine();
     eatApple();
     snake.move();
+    createMine();
   }
-  createMine();
+
 }
 function createMine() {
   var n = Math.floor(Math.random() * 1500);
   if (n > 1475 && mines.length < 50) {
     var xMine = Math.floor(Math.random() * 28);
     var yMine = Math.floor(Math.random() * 28);
+
+    //*previene che le mine e la mela si sovrappongano
     if (xMine != apple.x && yMine != apple.y) {
       var mine = new Mine(xMine, yMine, snake.size);
       mines.push(mine);
@@ -138,6 +153,8 @@ function eatApple() {
     xApple = Math.floor(Math.random() * 28);
     yApple = Math.floor(Math.random() * 28);
     let occupied = false;
+
+    //*previene che le mine e la mela si sovrappongano
     for (var i = 0; i < mines.length; i++) {
       if (xApple == mines[i].x && yApple == mines[i].y) {
         occupied = true;
@@ -196,6 +213,7 @@ function createRect(x, y, width, height, color) {
   canvasContext.fillRect(x, y, width, height);
 }
 
+//eventListener per controllare snake da tastiera
 window.addEventListener("keydown", (event) => {
   if (event.key == "ArrowUp") {
     snake.rotateX = 0;
